@@ -53,6 +53,9 @@ def get_response(message, review) -> str:
         #get deck from mongo
         Deck.review()
 
+    if p_message == "pomodoro":
+        return ""
+
     if p_message == "help":
         help_message = ("These are the currently available commands: \n"
                 "\t !help: currently in use, showing all commands and their functionalities. \n"

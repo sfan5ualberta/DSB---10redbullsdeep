@@ -13,11 +13,10 @@ class Deck():
             
     def showDeck(self):
         for i in range(0, len(self.cards)):
-            print("%d : " % i, end='')
-            print(self.cards[i])
+            print(f"{i} : {self.cards[i]}")
 
     def review(self):
-        print(self.cards[0])
+        print(self.cards[0].GetQuestion(), f"\n||{self.cards[0].GetAnswer()}||")
         self.cards.append(self.cards.pop(self.curCard)) # move card to back
 
     def shuffle(self):
