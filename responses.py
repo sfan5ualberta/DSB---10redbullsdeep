@@ -8,26 +8,47 @@ def get_response(message, review) -> str:
         return "What's up?"
 
     if p_message[:11] == "createdeck ":
-        return "create"
+        deckname = p_message[12:]
+        return deckname, p_message, "create"
 
     if p_message[:11] == "deletedeck ":
+        deckname = p_message[12:]
         return "delete"
 
     if p_message[:11] == "browsedeck ":
+        deckname = p_message[12:]
         return "browse"
 
     if p_message[:8] == "addcard ":
+        deckname = p_message[9:]
         return "add"
 
     if p_message[:11] == "removecard ":
+        deckname = p_message[12:]
         return "remove"
 
+<<<<<<< HEAD
     if p_message == "review":
         return review
     if p_message == "settrue":
         review = True
 
 
+=======
+    if p_message[:5] == "review":
+        deckname = p_message[6:]
+        return "review"
+    
+    if p_message[:3] == "flip":
+        return "review"
+    
+    if p_message[:3] == "next":
+        return "review"
+
+    if p_message[:3] == "stop":
+        return "stop"
+    
+>>>>>>> b676899358fe92f49e41a3ad4edc0fdb22119485
     if p_message == "help":
         help_message = ("These are the currently available commands: \n"
                 "\t !help: currently in use, showing all commands and their functionalities. \n"
