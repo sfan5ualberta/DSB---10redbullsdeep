@@ -1,6 +1,6 @@
 import discord
+from discord.ext import commands
 import responses
-
 
 async def send_message(message, user_message, is_private):
     try:
@@ -17,12 +17,14 @@ def run_discord_bot():
     intents.message_content = True
     client = discord.Client(intents=intents)
 
+   
     @client.event
     async def on_ready():
         print(f'{client.user} is now running!')
 
     @client.event
     async def on_message(message):
+       
         if message.author == client.user:
             return
 
@@ -35,7 +37,7 @@ def run_discord_bot():
         if user_message[0] == '?':
             user_message = user_message[1:]
             await send_message(message, user_message, is_private=True)
-        elif user_message[0] == '!':
+        elif user_message[0] == '!': 
             user_message = user_message[1:]
             await send_message(message, user_message, is_private=False)
 

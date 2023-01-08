@@ -1,6 +1,14 @@
 import random
+import pymongo
+from pymongo import MongoClient
+
 
 def get_response(message) -> str:
+    mongo_url = "mongodb+srv://mongo:ilovemongodb@cluster0.jvcmb3x.mongodb.net/?retryWrites=true&w=majority"
+    cluster = MongoClient(mongo_url)
+    db = cluster["10redbullsdeep"]
+    collection = db["Decks"]
+
     p_message = message.lower()
 
     if p_message == 'hello':
@@ -10,27 +18,29 @@ def get_response(message) -> str:
         return str(random.randint(1,6))
 
     if p_message[:11] == "createdeck ":
-        deckname = p_message[12:]
+        deckname = p_message[11:]
+        collection.insert_one({"name": deckname})
         return deckname, p_message, "create"
 
     if p_message[:11] == "deletedeck ":
-        deckname = p_message[12:]
+        deckname = p_message[11:]
+        collection.delete_one({"name": deckname})
         return "delete"
 
     if p_message[:11] == "browsedeck ":
-        deckname = p_message[12:]
+        deckname = p_message[11:]
         return "browse"
 
     if p_message[:8] == "addcard ":
-        deckname = p_message[9:]
+        deckname = p_message[8:]
         return "add"
 
     if p_message[:11] == "removecard ":
-        deckname = p_message[12:]
+        deckname = p_message[11:]
         return "remove"
 
     if p_message[:5] == "review":
-        deckname = p_message[6:]
+        deckname = p_message[5:]
         return "review"
     
     if p_message[:3] == "flip":
