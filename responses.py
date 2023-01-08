@@ -10,20 +10,38 @@ def get_response(message) -> str:
         return str(random.randint(1,6))
 
     if p_message[:11] == "createdeck ":
-        return "create"
+        deckname = p_message[12:]
+        return deckname, p_message, "create"
 
     if p_message[:11] == "deletedeck ":
+        deckname = p_message[12:]
         return "delete"
 
     if p_message[:11] == "browsedeck ":
+        deckname = p_message[12:]
         return "browse"
 
     if p_message[:8] == "addcard ":
+        deckname = p_message[9:]
         return "add"
 
     if p_message[:11] == "removecard ":
+        deckname = p_message[12:]
         return "remove"
 
+    if p_message[:5] == "review":
+        deckname = p_message[6:]
+        return "review"
+    
+    if p_message[:3] == "flip":
+        return "review"
+    
+    if p_message[:3] == "next":
+        return "review"
+
+    if p_message[:3] == "stop":
+        return "stop"
+    
     if p_message == "help":
         help_message = ("These are the currently available commands: \n"
                 "\t !help: currently in use, showing all commands and their functionalities. \n"
