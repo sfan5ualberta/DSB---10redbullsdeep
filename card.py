@@ -3,8 +3,8 @@ class Card:
         self.question = question
         self.answer = answer 
 
-    def displayQuestion(self):
+    def getQuestion(self):
         return self.question
 
-    def displayAnswer(self):
+    def getAnswer(self):
         return self.answer

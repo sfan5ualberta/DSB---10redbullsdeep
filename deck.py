@@ -10,5 +10,7 @@ class Deck():
     
     def removeCard(self, cardNumber):
         if (len(self.card) <= cardNumber and cardNumber >= 0):
-            self.card.pop(cardNumber)
-        
+            self.cards.pop(cardNumber)
+    
+    def review(self):
+        pass
