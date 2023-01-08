@@ -2,6 +2,8 @@ import random
 import pymongo
 from pymongo import MongoClient
 from deck import Deck
+from bson.binary import Binary
+import pickle
 
 def get_response(message) -> str:
     mongo_url = "mongodb+srv://mongo:ilovemongodb@cluster0.jvcmb3x.mongodb.net/?retryWrites=true&w=majority"
@@ -17,7 +19,8 @@ def get_response(message) -> str:
 
     if p_message[:11] == "createdeck ":
         deckname = p_message[11:]
-        collection.insert_one({"name": deckname})
+        bytes = pickle.dumps(Deck(deckname))
+        collection.insert_one({"name": deckname, "bin-data": Binary(bytes)})
         return deckname, p_message, "create"
 
     if p_message[:11] == "deletedeck ":
@@ -43,7 +46,11 @@ def get_response(message) -> str:
         prompt = split_message[2]
         answer = split_message[3]
         # get deck object with deckname from mongo
-        Deck.addCard(prompt, answer)
+        data = collection.find_one({"name": deckname}, {"name":0, "_id":0})
+        deck = pickle.loads(data["bin-data"])
+        deck.addCard(prompt, answer)
+        bytes = pickle.dumps(deck)
+        collection.update_one({"name": deckname}, {"$set":{"bin-data": bytes}}, upsert = False)
         return "add"
 
     if p_message[:11] == "removecard ":
@@ -56,11 +63,26 @@ def get_response(message) -> str:
         
         return "remove"
     
-    if p_message[:7] == "review":
+    if p_message[:7] == "review ":
         deckname = p_message[7:]
-        #get deck from mongo
-        Deck.review()
+        # get deck from mongo
+        data = collection.find_one({"name": deckname}, {"name":0, "_id":0})
+        deck = pickle.loads(data["bin-data"])
+        str, deck = deck.review()
+        bytes = pickle.dumps(deck)
+        collection.update_one({"name": deckname}, {"$set":{"bin-data": bytes}}, upsert = False) 
+        return str
 
+    if p_message[:8] == "shuffle ":
+        deckname = p_message[8:]
+        data = collection.find_one({"name": deckname}, {"name":0, "_id":0})
+        deck = pickle.loads(data["bin-data"])
+        deck = deck.shuffle()
+        bytes = pickle.dumps(deck)
+        collection.update_one({"name": deckname}, {"$set":{"bin-data": bytes}}, upsert = False)
+        return f"{deckname} is now shuffled!"
+
+        
     if p_message == "pomodoro":
         pass # do nothing, handeled in bot.py
    

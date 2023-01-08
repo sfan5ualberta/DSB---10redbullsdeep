@@ -6,18 +6,22 @@ class Deck():
         self.cards = []    
     def addCard(self, question, answer):
         self.cards.append(Card(question, answer))
-    
+        print(len(self.cards))
     def removeCard(self, cardNumber):
-        if (len(self.cards) <= cardNumber and cardNumber >= 0):
+        if (len(self.cards) < cardNumber and cardNumber >= 0):
             self.cards.pop(cardNumber)
             
     def showDeck(self):
+        ret_string = ""
         for i in range(0, len(self.cards)):
-            print(f"{i} : {self.cards[i]}")
+            ret_string += f"{i} : {self.cards[i]} \n"
+        return ret_string
 
     def review(self):
-        print(self.cards[0].GetQuestion(), f"\n||{self.cards[0].GetAnswer()}||")
-        self.cards.append(self.cards.pop(self.curCard)) # move card to back
+        ret_string = f"{self.cards[0].getQuestion()}\n||{self.cards[0].getAnswer()}||"
+        self.cards.append(self.cards.pop(0)) # move card to back
+        return ret_string, self
 
     def shuffle(self):
         random.shuffle(self.cards)
+        return self
