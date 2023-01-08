@@ -11,7 +11,7 @@ def get_response(message) -> str:
 
     if p_message[:11] == "createdeck ":
         deckname = p_message[12:]
-        return "create"
+        return deckname, p_message, "create"
 
     if p_message[:11] == "deletedeck ":
         deckname = p_message[12:]
@@ -28,7 +28,7 @@ def get_response(message) -> str:
     if p_message[:11] == "removecard ":
         deckname = p_message[12:]
         return "remove"
-    
+
     if p_message[:5] == "review":
         deckname = p_message[6:]
         return "review"
