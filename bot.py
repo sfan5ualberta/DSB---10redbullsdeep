@@ -12,9 +12,9 @@ async def send_message(message, user_message):
         print(e)
 
 async def pomodoro(message):
-    await message.channel.send(f"Your studying time has started for 45 minutes.")
+    await message.channel.send(f"Your studying time has started for 25 minutes.")
     await asyncio.sleep(1500) # 1500 seconds = 25 minutes 
-    await message.channel.send("Take a 15 minute break!")
+    await message.channel.send("Take a 5 minute break!")
     await asyncio.sleep(300) # 300 seconds = 5 minutes
     await message.channel.send("Break time ended. Use !pomodoro to continue your next session!")
     return
