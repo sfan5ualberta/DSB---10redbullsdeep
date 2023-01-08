@@ -1,28 +1,36 @@
 import random
+import pymongo
+from pymongo import MongoClient
 from deck import Deck
 
-def get_response(message, review) -> str:
+def get_response(message) -> str:
+    mongo_url = "mongodb+srv://mongo:ilovemongodb@cluster0.jvcmb3x.mongodb.net/?retryWrites=true&w=majority"
+    cluster = MongoClient(mongo_url)
+    db = cluster["10redbullsdeep"]
+    collection = db["Decks"]
+
     p_message = message.lower()
 
     if p_message == 'hello':
         return "What's up?"
 
+
     if p_message[:11] == "createdeck ":
         deckname = p_message[11:]
-        # create empty deck object in mongodb with deckname
-        return "create"
+        collection.insert_one({"name": deckname})
+        return deckname, p_message, "create"
 
     if p_message[:11] == "deletedeck ":
         deckname = p_message[11:]
-        #delete deck from mongodb
+        collection.delete_one({"name": deckname})
         return "delete"
 
     if p_message[:11] == "browsedeck ":
         deckname = p_message[11:]
-        # get deck object with deckname from mongo
+        # get all deck object names and print
         Deck.showDeck()
         return "browse"
-    
+        
     if p_message == "decks":
         #loop over all decks, printing their names
         pass
@@ -54,8 +62,8 @@ def get_response(message, review) -> str:
         Deck.review()
 
     if p_message == "pomodoro":
-        return ""
-
+        pass # do nothing, handeled in bot.py
+   
     if p_message == "help":
         help_message = ("These are the currently available commands: \n"
                 "\t !help: currently in use, showing all commands and their functionalities. \n"

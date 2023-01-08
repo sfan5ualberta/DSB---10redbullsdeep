@@ -1,13 +1,11 @@
 import discord
+from discord.ext import commands
 import responses
 import asyncio
-from discord.ext import commands
-
-review = False
 
 async def send_message(message, user_message):
     try:
-        response = responses.get_response(user_message, review)
+        response = responses.get_response(user_message)
         await message.channel.send(response)
 
     except Exception as e:
@@ -27,16 +25,14 @@ def run_discord_bot():
     intents.message_content = True
     client = discord.Client(intents=intents)
 
-
     @client.event
     async def on_ready():
         print(f'{client.user} is now running!')
-        global review 
-        review = False
 
 
     @client.event
     async def on_message(message):
+       
         if message.author == client.user:
             return
 
