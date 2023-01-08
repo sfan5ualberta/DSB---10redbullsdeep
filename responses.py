@@ -21,7 +21,7 @@ def get_response(message) -> str:
         deckname = p_message[11:]
         bytes = pickle.dumps(Deck(deckname))
         collection.insert_one({"name": deckname, "bin-data": Binary(bytes)})
-        return deckname, p_message, "create"
+        return f"Created deck: {deckname}"
 
     if p_message[:11] == "deletedeck ":
         deckname = p_message[11:]
@@ -30,38 +30,45 @@ def get_response(message) -> str:
 
     if p_message[:11] == "browsedeck ":
         deckname = p_message[11:]
-        # get all deck object names and print
-        Deck.showDeck()
-        return "browse"
+        data = collection.find_one({"name": deckname},{"name":0, "_id": 0})
+        deck = pickle.loads(data["bin-data"])
+        return deck.showDeck()
+
         
     if p_message == "decks":
-        #loop over all decks, printing their names
-        pass
-
+        # loop over all decks, printing their names
+        deckStr = ""
+        for doc in collection.find():
+            deckStr += f'{doc["name"]}\n'
+        return deckStr
+    
     if p_message[:8] == "addcard ":
-        split_message = p_message.split()
-        if len(split_message) != 4:
+        split_message = p_message[8:].split(", ")
+        if len(split_message) != 3:
             return "invalid input"
-        deckname = split_message[1]
-        prompt = split_message[2]
-        answer = split_message[3]
+        deckname = split_message[0]
+        prompt = split_message[1]
+        answer = split_message[2]
         # get deck object with deckname from mongo
         data = collection.find_one({"name": deckname}, {"name":0, "_id":0})
         deck = pickle.loads(data["bin-data"])
         deck.addCard(prompt, answer)
         bytes = pickle.dumps(deck)
         collection.update_one({"name": deckname}, {"$set":{"bin-data": bytes}}, upsert = False)
-        return "add"
+        return f"Added {prompt}: {answer}"
 
     if p_message[:11] == "removecard ":
         split_message = p_message.split()
         if len(split_message) != 3:
-            return "invalid input"
+            return "Invalid input"
         deckname = split_message[1]
         card_index = split_message[2]
-        Deck.removeCard(card_index)
-        
-        return "remove"
+        data = collection.find_one({"name": deckname},{"name":0, "_id": 0})
+        deck = pickle.loads(data["bin-data"])
+        deck.removeCard(card_index)
+        bytes = pickle.dumps(deck)
+        collection.update_one({"name": deckname}, {"$set":{"bin-data": bytes}}, upsert = False)
+        return "Card has been removed"
     
     if p_message[:7] == "review ":
         deckname = p_message[7:]
@@ -88,15 +95,15 @@ def get_response(message) -> str:
    
     if p_message == "help":
         help_message = ("These are the currently available commands: \n"
-                "\t !help: currently in use, showing all commands and their functionalities. \n"
-                "\t !createDeck (Deck name): create a new deck to add cards to. \n"
-                "\t !deleteDeck (Deck name): delete an existing deck.\n"
+                "\t !addCard (Deck name), (Prompt), (Answer): add a card to a deck.\n"
                 "\t !browseDeck (Deck name): check all the cards in a deck. \n"
+                "\t !createDeck (Deck name): create a new deck to add cards to. \n"
                 "\t !decks: list all deck names. \n"
-                "\t !addCard (Deck name) (Prompt) (Answer): add a card to a deck.\n"
+                "\t !deleteDeck (Deck name): delete an existing deck.\n"
+                "\t !help: currently in use, showing all commands and their functionalities. \n"
                 "\t !removeCard (Deck name) (Card #): remove a card in the deck. \n"
-                "\t !review (Deck name): Display the next card in this deck.\n"
-        )
+                "\t !review (Deck name): display the next card in this deck.\n"
+                "\t !shuffle (Deck name): randomizes the order of cards in this deck.\n")
         return help_message
     
     return "I don't understand! Check !help for legal commands."
