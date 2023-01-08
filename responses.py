@@ -1,13 +1,11 @@
 import random
+from deck import Deck
 
-def get_response(message) -> str:
+def get_response(message, review) -> str:
     p_message = message.lower()
 
     if p_message == 'hello':
         return "What's up?"
-
-    if p_message == 'roll':
-        return str(random.randint(1,6))
 
     if p_message[:11] == "createdeck ":
         return "create"
@@ -23,6 +21,12 @@ def get_response(message) -> str:
 
     if p_message[:11] == "removecard ":
         return "remove"
+
+    if p_message == "review":
+        return review
+    if p_message == "settrue":
+        review = True
+
 
     if p_message == "help":
         help_message = ("These are the currently available commands: \n"
@@ -40,4 +44,4 @@ def get_response(message) -> str:
         )
         return help_message
     
-    return "I don't understand!"
+    return "I don't understand! Check !help for legal commands."
